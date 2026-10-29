@@ -1,0 +1,734 @@
+```html
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CACCONVO 早午餐｜線上點餐</title>
+
+<style>
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: Arial, "Microsoft JhengHei", sans-serif;
+  background: #fff9ed;
+  color: #493821;
+}
+
+header {
+  text-align: center;
+  padding: 30px 15px;
+  background: #fff0c7;
+}
+
+header h1 {
+  font-size: 32px;
+  margin: 0;
+  letter-spacing: 2px;
+}
+
+header p {
+  color: #806747;
+  margin-bottom: 0;
+}
+
+.container {
+  max-width: 1200px;
+  margin: auto;
+  padding: 20px;
+}
+
+.search {
+  width: 100%;
+  padding: 13px;
+  border: 1px solid #eadfc9;
+  border-radius: 10px;
+  font-size: 16px;
+  margin-bottom: 15px;
+}
+
+.tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 25px;
+}
+
+.tabs button {
+  background: white;
+  border: 1px solid #eadfc9;
+  border-radius: 20px;
+  padding: 10px 14px;
+  cursor: pointer;
+}
+
+.tabs button:hover {
+  background: #f5c95d;
+}
+
+h2 {
+  border-bottom: 2px solid #f5c95d;
+  padding-bottom: 10px;
+  margin-top: 30px;
+}
+
+.layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 320px;
+  gap: 22px;
+  align-items: start;
+}
+
+.menu-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.item {
+  background: white;
+  border: 1px solid #eadfc9;
+  border-radius: 12px;
+  padding: 15px;
+}
+
+.item h3 {
+  font-size: 15px;
+  line-height: 1.5;
+  margin: 0 0 12px;
+}
+
+.item-bottom {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+}
+
+.price {
+  color: #a76a19;
+  font-size: 17px;
+  font-weight: bold;
+}
+
+button {
+  font-family: inherit;
+}
+
+.add {
+  background: #493821;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 9px 12px;
+  cursor: pointer;
+}
+
+.add:hover {
+  background: #6d5739;
+}
+
+.cart {
+  background: white;
+  border: 1px solid #eadfc9;
+  border-radius: 15px;
+  padding: 18px;
+  position: sticky;
+  top: 15px;
+}
+
+.cart h2 {
+  margin-top: 0;
+}
+
+.cart-item {
+  padding: 12px 0;
+  border-bottom: 1px solid #eee3d2;
+}
+
+.cart-name {
+  font-size: 14px;
+  font-weight: bold;
+  overflow-wrap: anywhere;
+}
+
+.cart-controls {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.cart-controls button {
+  background: #fff9ed;
+  border: 1px solid #eadfc9;
+  border-radius: 6px;
+  padding: 4px 9px;
+  cursor: pointer;
+}
+
+.remove {
+  margin-left: auto;
+}
+
+.field {
+  margin-top: 15px;
+}
+
+.field label {
+  display: block;
+  margin-bottom: 6px;
+  font-size: 14px;
+  font-weight: bold;
+}
+
+.field input,
+.field select,
+.field textarea {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #eadfc9;
+  border-radius: 8px;
+  background: white;
+  font-size: 14px;
+}
+
+.total {
+  display: flex;
+  justify-content: space-between;
+  font-size: 19px;
+  font-weight: bold;
+  padding: 18px 0;
+}
+
+.checkout {
+  width: 100%;
+  padding: 14px;
+  border: none;
+  border-radius: 9px;
+  background: #f5c95d;
+  color: #493821;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.checkout:hover {
+  background: #edb93b;
+}
+
+.empty {
+  color: #8a795f;
+  font-size: 14px;
+}
+
+.note {
+  color: #8a795f;
+  font-size: 12px;
+  line-height: 1.6;
+}
+
+footer {
+  text-align: center;
+  padding: 25px;
+  color: #806747;
+}
+
+@media (max-width: 800px) {
+  .layout {
+    grid-template-columns: 1fr;
+  }
+
+  .cart {
+    position: static;
+    grid-row: 1;
+  }
+}
+
+@media (max-width: 480px) {
+  .menu-grid {
+    grid-template-columns: 1fr;
+  }
+
+  header h1 {
+    font-size: 25px;
+  }
+
+  .container {
+    padding: 12px;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<header>
+  <h1>CACCONVO 早午餐</h1>
+  <p>CONVENIENT · FAST · TASTY · COMFORTABLE</p>
+  <p>線上點餐｜營業時間 09:00–20:00</p>
+</header>
+
+<div class="container">
+
+  <input
+    id="search"
+    class="search"
+    placeholder="搜尋餐點，例如：雞肉、咖啡、荷包蛋..."
+    oninput="renderMenu()"
+  >
+
+  <nav class="tabs" id="tabs"></nav>
+
+  <div class="layout">
+
+    <main id="menu"></main>
+
+    <aside class="cart">
+      <h2>🛒 我的購物車</h2>
+
+      <div id="cartItems">
+        <p class="empty">尚未選擇餐點</p>
+      </div>
+
+      <div class="total">
+        <span>總金額</span>
+        <span id="total">NT$0</span>
+      </div>
+
+      <div class="field">
+        <label for="orderType">用餐方式</label>
+        <select id="orderType" onchange="toggleTable()">
+          <option value="內用">內用</option>
+          <option value="外帶">外帶</option>
+        </select>
+      </div>
+
+      <div class="field" id="tableField">
+        <label for="table">桌號</label>
+        <select id="table">
+          <option value="">請選擇桌號</option>
+          <option>T1</option>
+          <option>T2</option>
+          <option>T3</option>
+          <option>T4</option>
+          <option>T5</option>
+          <option>T6</option>
+          <option>T7</option>
+          <option>T8</option>
+          <option>T9</option>
+          <option>T10</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label for="customerName">稱呼（選填）</label>
+        <input id="customerName" placeholder="請輸入您的稱呼">
+      </div>
+
+      <div class="field">
+        <label for="phone">聯絡電話（選填）</label>
+        <input id="phone" placeholder="請輸入聯絡電話">
+      </div>
+
+      <div class="field">
+        <label for="orderNote">訂單備註</label>
+        <textarea id="orderNote" placeholder="例如：少冰、少糖、不要餐具..."></textarea>
+      </div>
+
+      <button class="checkout" onclick="checkout()">
+        確認訂單
+      </button>
+
+      <p class="note">
+        此為網站展示版。確認訂單後會顯示訂單摘要，
+        不會自動傳送至店家或處理付款。
+      </p>
+    </aside>
+
+  </div>
+</div>
+
+<footer>
+  CACCONVO 早午餐 ♡ 感謝您的光臨
+</footer>
+
+<script>
+const groups = [
+{
+  title: "早午餐套餐｜Brunch",
+  items: [
+    ["⭐ CACCONVO 招牌早午餐",259],
+    ["經典美式早午餐",199],
+    ["德式香腸早午餐",219],
+    ["香煎雞腿早午餐",249],
+    ["煙燻鮭魚早午餐",289],
+    ["酪梨水波蛋早午餐",239],
+    ["嫩煎牛排早午餐",329],
+    ["起司培根早午餐",269],
+    ["香煎豬排早午餐",259],
+    ["雙層起司牛肉早午餐",299]
+  ]
+},
+{
+  title: "義大利麵｜Pasta",
+  items: [
+    ["奶油培根義大利麵",189],
+    ["青醬雞肉義大利麵",219],
+    ["番茄肉醬義大利麵",199],
+    ["蒜香白酒蛤蜊義大利麵",239],
+    ["奶油鮮蝦義大利麵",249],
+    ["⭐ 松露野菇奶油義大利麵",229],
+    ["明太子奶油義大利麵",239],
+    ["蒜香辣味雞肉義大利麵",229]
+  ]
+},
+{
+  title: "義式燉飯｜Risotto",
+  items: [
+    ["奶油野菇燉飯",199],
+    ["青醬雞肉燉飯",229],
+    ["南瓜起司燉飯",209],
+    ["⭐ 奶油海鮮燉飯",269],
+    ["松露起司燉飯",239]
+  ]
+},
+{
+  title: "輕食／三明治｜Light Meals",
+  items: [
+    ["酪梨雞肉三明治",169],
+    ["煙燻鮭魚可頌",189],
+    ["經典總匯三明治",159],
+    ["香煎雞肉凱薩沙拉",179],
+    ["鮮蝦酪梨沙拉",199],
+    ["火腿起司可頌",169]
+  ]
+},
+{
+  title: "甜點／鬆餅｜Desserts",
+  items: [
+    ["經典蜂蜜鬆餅",129],
+    ["⭐ 草莓鮮奶油鬆餅",169],
+    ["香蕉巧克力法式吐司",159],
+    ["焦糖布丁",89],
+    ["巧克力香蕉鬆餅",149],
+    ["提拉米蘇",129],
+    ["巴斯克乳酪蛋糕",169]
+  ]
+},
+{
+  title: "小點心｜Snacks",
+  items: [
+    ["松露薯條",99],
+    ["香酥雞翅",129],
+    ["起司條",109],
+    ["綜合炸物拼盤",199],
+    ["黃金洋蔥圈",109],
+    ["香酥雞塊",119],
+    ["松露帕瑪森薯條",149]
+  ]
+},
+{
+  title: "咖啡／特調飲品｜Drinks",
+  items: [
+    ["美式咖啡",70],
+    ["經典拿鐵",95],
+    ["焦糖瑪奇朵",110],
+    ["香草拿鐵",110],
+    ["抹茶拿鐵",115],
+    ["經典紅茶",55],
+    ["鮮奶茶",75],
+    ["蜂蜜檸檬茶",85],
+    ["百香果氣泡飲",95],
+    ["⭐ 草莓氣泡飲",110],
+    ["焦糖海鹽拿鐵",125],
+    ["水蜜桃冰茶",95],
+    ["芒果氣泡飲",115],
+    ["巧克力冰沙",120],
+    ["伯爵紅茶",80]
+  ]
+},
+{
+  title: "單點加購｜Extra Add-ons",
+  items: [
+    ["荷包蛋",20],
+    ["炒蛋",30],
+    ["水波蛋",30],
+    ["起司片",20],
+    ["切達起司",25],
+    ["培根（2片）",35],
+    ["德式香腸（2條）",40],
+    ["香煎雞腿排",70],
+    ["香煎雞胸肉",60],
+    ["牛排加量",100],
+    ["煙燻鮭魚",70],
+    ["酪梨",40],
+    ["薯條",50],
+    ["生菜沙拉",40],
+    ["吐司（2片）",25],
+    ["法式吐司（1片）",35],
+    ["蘑菇",25],
+    ["玉米",20],
+    ["白飯",20],
+    ["義大利麵加量",40]
+  ]
+},
+{
+  title: "飲料加料｜Drink Toppings",
+  items: [
+    ["珍珠",10],
+    ["愛玉",15],
+    ["椰果",15],
+    ["仙草凍",15],
+    ["加鮮奶",15],
+    ["加濃縮咖啡",20]
+  ]
+},
+{
+  title: "個人優惠套餐｜Set Meals",
+  items: [
+    [
+      "A｜經典悠閒套餐",
+      469,
+      "經典美式早午餐＋巴斯克乳酪蛋糕＋美式咖啡；原價548元，省79元"
+    ],
+    [
+      "B｜義式午餐套餐",
+      499,
+      "青醬雞肉義大利麵＋松露帕瑪森薯條＋經典拿鐵；原價568元，省69元"
+    ],
+    [
+      "C｜精緻牛排套餐",
+      729,
+      "沙朗牛排＋松露帕瑪森薯條＋伯爵紅茶；原價828元，省99元"
+    ]
+  ]
+}
+];
+
+let cart = {};
+
+function money(value) {
+  return "NT$" + value.toLocaleString("en-US");
+}
+
+function renderMenu() {
+  const keyword = document.getElementById("search").value
+    .trim().toLowerCase();
+
+  const menu = document.getElementById("menu");
+  const tabs = document.getElementById("tabs");
+
+  menu.innerHTML = "";
+  tabs.innerHTML = "";
+
+  groups.forEach((group, index) => {
+    const matched = group.items.filter(item =>
+      item[0].toLowerCase().includes(keyword) ||
+      (item[2] || "").toLowerCase().includes(keyword)
+    );
+
+    if (!matched.length) return;
+
+    const tab = document.createElement("button");
+    tab.textContent = group.title.split("｜")[0];
+
+    tab.onclick = () => {
+      document.getElementById("section-" + index)
+        ?.scrollIntoView({ behavior: "smooth" });
+    };
+
+    tabs.appendChild(tab);
+
+    const section = document.createElement("section");
+    section.id = "section-" + index;
+
+    const heading = document.createElement("h2");
+    heading.textContent = group.title;
+    section.appendChild(heading);
+
+    const grid = document.createElement("div");
+    grid.className = "menu-grid";
+
+    matched.forEach(item => {
+      const name = item[0];
+      const price = item[1];
+      const description = item[2] || "";
+
+      const card = document.createElement("article");
+      card.className = "item";
+
+      const title = document.createElement("h3");
+      title.textContent = name;
+      card.appendChild(title);
+
+      if (description) {
+        const desc = document.createElement("p");
+        desc.className = "note";
+        desc.textContent = description;
+        card.appendChild(desc);
+      }
+
+      const bottom = document.createElement("div");
+      bottom.className = "item-bottom";
+
+      const priceEl = document.createElement("span");
+      priceEl.className = "price";
+      priceEl.textContent = money(price);
+
+      const add = document.createElement("button");
+      add.className = "add";
+      add.textContent = "＋ 加入";
+      add.onclick = () => addToCart(name, price);
+
+      bottom.append(priceEl, add);
+      card.appendChild(bottom);
+      grid.appendChild(card);
+    });
+
+    section.appendChild(grid);
+    menu.appendChild(section);
+  });
+}
+
+function addToCart(name, price) {
+  if (cart[name]) {
+    cart[name].qty++;
+  } else {
+    cart[name] = { price: price, qty: 1 };
+  }
+
+  renderCart();
+}
+
+function changeQty(name, amount) {
+  if (!cart[name]) return;
+
+  cart[name].qty += amount;
+
+  if (cart[name].qty <= 0) {
+    delete cart[name];
+  }
+
+  renderCart();
+}
+
+function removeItem(name) {
+  delete cart[name];
+  renderCart();
+}
+
+function renderCart() {
+  const box = document.getElementById("cartItems");
+  box.innerHTML = "";
+
+  let total = 0;
+  const entries = Object.entries(cart);
+
+  if (entries.length === 0) {
+    const empty = document.createElement("p");
+    empty.className = "empty";
+    empty.textContent = "尚未選擇餐點";
+    box.appendChild(empty);
+  }
+
+  entries.forEach(([name, item]) => {
+    total += item.price * item.qty;
+
+    const row = document.createElement("div");
+    row.className = "cart-item";
+
+    const title = document.createElement("div");
+    title.className = "cart-name";
+    title.textContent = name + " — " + money(item.price * item.qty);
+
+    const controls = document.createElement("div");
+    controls.className = "cart-controls";
+
+    const minus = document.createElement("button");
+    minus.textContent = "−";
+    minus.onclick = () => changeQty(name, -1);
+
+    const qty = document.createElement("span");
+    qty.textContent = item.qty;
+
+    const plus = document.createElement("button");
+    plus.textContent = "＋";
+    plus.onclick = () => changeQty(name, 1);
+
+    const remove = document.createElement("button");
+    remove.textContent = "移除";
+    remove.className = "remove";
+    remove.onclick = () => removeItem(name);
+
+    controls.append(minus, qty, plus, remove);
+    row.append(title, controls);
+    box.appendChild(row);
+  });
+
+  document.getElementById("total").textContent = money(total);
+}
+
+function toggleTable() {
+  const takeaway = document.getElementById("orderType").value === "外帶";
+  document.getElementById("tableField").style.display =
+    takeaway ? "none" : "block";
+}
+
+function checkout() {
+  const entries = Object.entries(cart);
+
+  if (!entries.length) {
+    alert("請先選擇餐點！");
+    return;
+  }
+
+  const type = document.getElementById("orderType").value;
+  const table = document.getElementById("table").value;
+
+  if (type === "內用" && !table) {
+    alert("請選擇內用桌號！");
+    return;
+  }
+
+  let total = 0;
+
+  const lines = entries.map(([name, item]) => {
+    const subtotal = item.price * item.qty;
+    total += subtotal;
+    return `${name} × ${item.qty} = ${money(subtotal)}`;
+  });
+
+  const name = document.getElementById("customerName").value || "未填寫";
+  const phone = document.getElementById("phone").value || "未填寫";
+  const note = document.getElementById("orderNote").value || "無";
+
+  const summary =
+`CACCONVO 早午餐｜訂單摘要
+
+用餐方式：${type}
+${type === "內用" ? "桌號：" + table : ""}
+稱呼：${name}
+電話：${phone}
+
+${lines.join("\n")}
+
+總金額：${money(total)}
+
+備註：${note}
+
+提醒：這只是訂單摘要，尚未傳送至店家。`;
+
+  alert(summary);
+}
+
+renderMenu();
+renderCart();
+</script>
+
+</body>
+</html>
+```
